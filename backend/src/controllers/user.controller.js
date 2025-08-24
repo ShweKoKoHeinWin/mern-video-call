@@ -22,7 +22,7 @@ const getRecommendedUsers = async (request, response) => {
 
 const getMyFriends = async (request, response) => {
     try {
-        const user = await User.findById(response.user.id).select("friends").populate("friends", "fullName profilePic nativeLanguage learningLanguage");
+        const user = await User.findById(request.user.id).select("friends").populate("friends", "fullName profilePic nativeLanguage learningLanguage");
 
         response.status(200).json(user.friends)
     } catch (error) {
@@ -35,13 +35,13 @@ const sendFriendRequest = async (request, response) => {
     try {
         const myId = request.user.id;
         const { id: recipentId } = request.params;
-
         if (myId === recipentId) return response.status(400).json({ message: "You can't send friend request to yourself." });
+        
 
         const recipent = await User.findById(recipentId);
         if (!recipent) return response.status(400).json({ message: "User not found." });
-
         if (recipent.friends.includes(myId)) return response.status(400).json({ message: "You are already friends with this user." });
+
 
         const existingRequest = await FriendRequest.findOne({
             $or: [
@@ -49,7 +49,7 @@ const sendFriendRequest = async (request, response) => {
                 { sender: recipentId, recipent: myId }
             ]
         })
-
+        
         if (existingRequest) return response.status(400).json({ message: "A friend request already exists between you and this user." })
 
         const friendRequest = await FriendRequest.create({
@@ -59,7 +59,7 @@ const sendFriendRequest = async (request, response) => {
 
         response.status(201).json(friendRequest);
     } catch (error) {
-        console.error("Error in user.controller sendFriendRequest.");
+        console.error("Error in user.controller sendFriendRequest.", error);
         response.status(500).json({ message: "Internal server error." })
     }
 }

@@ -11,39 +11,86 @@ import CallPage from "./pages/CallPage";
 import ChatPage from "./pages/ChatPage";
 import Notifications from "./pages/Notifications";
 import OnboardingPage from "./pages/OnboardingPage";
-import { AxiosInstance } from "./lib/api";
-import { useQuery } from "@tanstack/react-query";
 import RoutIng from "./hooks/RoutIng";
-
+import PageLoader from "./components/PageLoader";
+import useAuthUser from "./hooks/useAuthUser";
+import Layout from "./components/Layout";
+import useTheme from "./stores/useThemeStore";
 
 function App() {
-    const getUsers = async () => {
-        const res = await AxiosInstance.get("/auth/me");
-        return res.data;
-    };
-    const { data: authData, error } = useQuery({
-        queryKey: ["authUser"],
-        queryFn: getUsers,
-        retry: false,
-    });
-    const authUser = authData?.user;
-    console.log(error)
+    const { authUser, isLoading } = useAuthUser();
+    const isAuth = Boolean(authUser);
+    const isOnBoarded = authUser?.isOnboarded;
+    const {theme} = useTheme();
+    if (isLoading) return <PageLoader />;
+
     return (
-        <div data-theme="coffee" className="h-screen">
+        <div data-theme={theme} className="min-h-screen">
             <Routes>
                 <Route
                     path="/"
-                    element={<RoutIng isAllow={authUser} redirect={'/signup'}><HomePage/></RoutIng>}
+                    element={
+                        <RoutIng
+                            isAllow={isAuth && isOnBoarded}
+                            redirect={isAuth ? "/onboarding" : "/login"}
+                        >
+                            <Layout showSidebar={true}>
+                                <HomePage />
+                            </Layout>
+                        </RoutIng>
+                    }
                 />
                 <Route
                     path="/signup"
-                    element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
+                    element={
+                        <RoutIng isAllow={!isAuth} redirect="/">
+                            <SignUpPage />{" "}
+                        </RoutIng>
+                    }
                 />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/notifications" element={<Notifications />} />
-                <Route path="/call" element={<CallPage />} />
-                <Route path="/chat" element={<ChatPage />} />
-                <Route path="/onboarding" element={<OnboardingPage />} />
+                <Route
+                    path="/login"
+                    element={
+                        <RoutIng isAllow={!isAuth} redirect="/">
+                            <LoginPage />
+                        </RoutIng>
+                    }
+                />
+                <Route
+                    path="/notifications"
+                    element={
+                        <RoutIng isAllow={isAuth} redirect={"/login"}>
+                            <Notifications />
+                        </RoutIng>
+                    }
+                />
+                <Route
+                    path="/call"
+                    element={
+                        <RoutIng isAllow={isAuth} redirect={"/login"}>
+                            <CallPage />
+                        </RoutIng>
+                    }
+                />
+                <Route
+                    path="/chat"
+                    element={
+                        <RoutIng isAllow={isAuth} redirect={"/login"}>
+                            <ChatPage />
+                        </RoutIng>
+                    }
+                />
+                <Route
+                    path="/onboarding"
+                    element={
+                        <RoutIng
+                            isAllow={isAuth && !isOnBoarded}
+                            redirect={isAuth ? "/" : "/login"}
+                        >
+                            <OnboardingPage />
+                        </RoutIng>
+                    }
+                />
             </Routes>
 
             <Toaster />
