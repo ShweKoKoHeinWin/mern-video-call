@@ -3,7 +3,7 @@ import useAuthUser from "../hooks/useAuthUser";
 import { Link, useLocation } from "react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import API from "../lib/api";
-import { BellIcon, LogOutIcon } from "lucide-react";
+import { BellIcon, LogOutIcon, ShipWheelIcon } from "lucide-react";
 import ThemeSelecter from "./ThemeSelecter";
 import useLogout from "../hooks/useLogout";
 
@@ -28,7 +28,7 @@ const Navbar = () => {
                         </div>
                     )}
 
-                    <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="flex items-center gap-3 sm:gap-4 ml-auto">
                         <Link to="/notifications">
                             <button className="btn btn-ghost btn-circle">
                                 <BellIcon className="h-6 w-6 text-base-content opacity-70" />

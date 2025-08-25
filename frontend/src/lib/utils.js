@@ -19,14 +19,16 @@ LocalStorage.set = (key, value) => {
 }
 
 const getLanguageFlag = (lang) => {
-    if(!lang) return null;
+    if (!lang) return null;
     const countryCode = LANGUAGE_TO_FLAG[lang.toLowerCase()];
-    if(!countryCode) return null;
+    if (!countryCode) return null;
     return `https://flagcdn.com/16x12/${countryCode}.png`;
 }
 
 const Str = {
-    capitalize: (str) => str[0]?.toUpperCase() + str?.slice(1),
+    capitalize: (str) => { 
+        if(typeof str !== "string") return '';
+        return str[0]?.toUpperCase() + str?.slice(1) },
 }
 
 export default { LocalStorage, getLanguageFlag, Str }

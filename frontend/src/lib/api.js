@@ -58,9 +58,27 @@ const getOutgoingRequests = async () => {
 }
 
 const sendFriendRequest = async (userId) => {
-    const res = await AxiosInstance.post(`/users/friend-request/${userId}`);
+    const res = await AxiosInstance.post(`/users/friend-requests/${userId}`);
     console.log(res)
     return res.data;
 }
 
-export default { signup, login, logout, getAuthUser, getFriends, getRecommandedUsers, getOutgoingRequests, completeOnBoarding, sendFriendRequest }
+const getFriendRequests = async () => {
+    const res = await AxiosInstance.get(`/users/friend-requests`);
+
+    return res.data;
+}
+
+const actionFriendRequest = async ({userId, type}) => {
+    console.log(userId, type);
+    if(!type || !['accept', 'reject'].includes(type)) return null;
+    const res = await AxiosInstance.put(`/users/friend-requests/${userId}/${type}`);
+    return res.data
+}
+
+const getStreamToken = async () => {
+    const res = await AxiosInstance.get('/chat/token');
+    return res.data;
+}
+
+export default { signup, login, logout, getAuthUser, getFriends, getRecommandedUsers, getOutgoingRequests, getStreamToken, getFriendRequests, completeOnBoarding, sendFriendRequest, actionFriendRequest }

@@ -21,7 +21,7 @@ function App() {
     const { authUser, isLoading } = useAuthUser();
     const isAuth = Boolean(authUser);
     const isOnBoarded = authUser?.isOnboarded;
-    const {theme} = useTheme();
+    const { theme } = useTheme();
     if (isLoading) return <PageLoader />;
 
     return (
@@ -59,24 +59,29 @@ function App() {
                 <Route
                     path="/notifications"
                     element={
-                        <RoutIng isAllow={isAuth} redirect={"/login"}>
+                        <RoutIng
+                            isAllow={isAuth && isOnBoarded}
+                            redirect={isAuth ? "/onboarding" : "/login"}
+                        >
                             <Notifications />
                         </RoutIng>
                     }
                 />
                 <Route
-                    path="/call"
+                    path="/call/:id"
                     element={
-                        <RoutIng isAllow={isAuth} redirect={"/login"}>
+                        <RoutIng isAllow={isAuth && isOnBoarded} redirect={isAuth ? "/onboarding" : "/login"}>
                             <CallPage />
                         </RoutIng>
                     }
                 />
                 <Route
-                    path="/chat"
+                    path="/chat/:id"
                     element={
-                        <RoutIng isAllow={isAuth} redirect={"/login"}>
-                            <ChatPage />
+                        <RoutIng isAllow={isAuth && isOnBoarded} redirect={isAuth ? "/onboarding" : "/login"}>
+                            <Layout showSidebar={false}>
+                                <ChatPage />
+                            </Layout>
                         </RoutIng>
                     }
                 />

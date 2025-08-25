@@ -102,10 +102,10 @@ const rejectFriendRequest = async (request, response) => {
 const getFriendRequests = async (request, response) => {
     try {
 
-        const imcomingRequests = await FriendRequest.find({ recipent: request.user.id, status: "pending" }).populate('sender', "fullName profilePic nativeLanguage learningLanguage");
-        const acceptedRequests = await FriendRequest.find({ sender: request.user.id, status: "accepted" }).populate('recipent', "fullName profilePic");
+        const incomingRequests = await FriendRequest.find({ recipent: request.user.id, status: "pending" }).populate('sender', "fullName profilePic nativeLanguage learningLanguage");
+        const acceptedRequests = await FriendRequest.find({ recipent: request.user.id, status: "accepted" }).populate('recipent', "fullName profilePic");
 
-        response.status(200).json({ imcomingRequests, acceptedRequests });
+        response.status(200).json({ incomingRequests, acceptedRequests });
     } catch (error) {
         console.error("Error in user.controller getFriendRequests.");
         response.status(500).json({ message: "Internal server error." });
